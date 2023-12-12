@@ -30,30 +30,6 @@ function main(): void {
     }
 }
 
-function CountBytes(filePaths: string[]): void {
-    // for each character get the byte size and add to the count
-    let totalByteCount = 0;
-
-    for (let index = 0; index < filePaths.length; index++) {
-        let byteCount = 0;
-
-        if (!fs.existsSync(filePaths[index])) {
-            console.error(`wc: ${filePaths[index]}: No such file or directory`);
-            continue;
-        }
-
-        let fileContent = fs.readFileSync(filePaths[index], "utf-8");
-        byteCount = GetByteCount(fileContent);
-        totalByteCount += byteCount;
-
-        console.log(`${byteCount} ${filePaths[index]}`);
-    }
-
-    if (filePaths.length > 1) {
-        console.log(`${totalByteCount} total`);
-    }
-}
-
 const byteSize = (str: string) => new Blob([str]).size;
 
 function GetByteCount(fileContent: string): number {
@@ -63,29 +39,6 @@ function GetByteCount(fileContent: string): number {
         count += byteSize(fileContent[j]);
     }
     return count;
-}
-
-function CountLines(filePaths: string[]): void {
-    let totalLineCount = 0;
-
-    for (let index = 0; index < filePaths.length; index++) {
-        let lineCount = 0;
-
-        if (!fs.existsSync(filePaths[index])) {
-            console.error(`wc: ${filePaths[index]}: No such file or directory`);
-            continue;
-        }
-
-        let fileContent = fs.readFileSync(filePaths[index], "utf-8");
-        lineCount = GetLineCount(fileContent);
-        totalLineCount += lineCount;
-
-        console.log(`${lineCount} ${filePaths[index]}`);
-    }
-
-    if (filePaths.length > 1) {
-        console.log(`${totalLineCount} total`);
-    }
 }
 
 function GetLineCount(fileContent: string): number {
@@ -106,29 +59,6 @@ function GetLineCount(fileContent: string): number {
     return count;
 }
 
-function CountCharacters(filePaths: string[]): void {
-    let totalCharCount = 0;
-
-    for (let index = 0; index < filePaths.length; index++) {
-        let charCount = 0;
-
-        if (!fs.existsSync(filePaths[index])) {
-            console.error(`wc: ${filePaths[index]}: No such file or directory`);
-            continue;
-        }
-
-        let fileContent = fs.readFileSync(filePaths[index], "utf-8");
-        charCount = GetCharacterCount(fileContent);
-        totalCharCount += charCount;
-
-        console.log(`${charCount} ${filePaths[index]}`);
-    }
-
-    if (filePaths.length > 1) {
-        console.log(`${totalCharCount} total`);
-    }
-}
-
 function GetCharacterCount(fileContent: string): number {
     let count = 0;
 
@@ -137,29 +67,6 @@ function GetCharacterCount(fileContent: string): number {
     }
 
     return count;
-}
-
-function CountWords(filePaths: string[]): void {
-    let totalWordCount = 0;
-
-    for (let index = 0; index < filePaths.length; index++) {
-        let wordCount = 0;
-
-        if (!fs.existsSync(filePaths[index])) {
-            console.error(`wc: ${filePaths[index]}: No such file or directory`);
-            continue;
-        }
-
-        let fileContent = fs.readFileSync(filePaths[index], "utf-8");
-        wordCount = GetWordCount(fileContent);
-        totalWordCount += wordCount;
-
-        console.log(`${wordCount} ${filePaths[index]}`);
-    }
-
-    if (filePaths.length > 1) {
-        console.log(`${totalWordCount} total`);
-    }
 }
 
 function GetWordCount(fileContent: string): number {
@@ -210,6 +117,49 @@ function GetDefaultCount(filePaths: string[]): void {
             `${totalLineCount} ${totalWordCount} ${totalByteCount} total`
         );
     }
+}
+
+function CountItems(
+    filePaths: string[],
+    getCount: (content: string) => number,
+    label: string
+): void {
+    let totalItemCount = 0;
+
+    for (let index = 0; index < filePaths.length; index++) {
+        let itemCount = 0;
+
+        if (!fs.existsSync(filePaths[index])) {
+            console.error(`wc: ${filePaths[index]}: No such file or directory`);
+            continue;
+        }
+
+        let fileContent = fs.readFileSync(filePaths[index], "utf-8");
+        itemCount = getCount(fileContent);
+        totalItemCount += itemCount;
+
+        console.log(`${itemCount} ${filePaths[index]}`);
+    }
+
+    if (filePaths.length > 1) {
+        console.log(`${totalItemCount} total ${label}`);
+    }
+}
+
+function CountBytes(filePaths: string[]): void {
+    CountItems(filePaths, GetByteCount, "bytes");
+}
+
+function CountLines(filePaths: string[]): void {
+    CountItems(filePaths, GetLineCount, "lines");
+}
+
+function CountCharacters(filePaths: string[]): void {
+    CountItems(filePaths, GetCharacterCount, "characters");
+}
+
+function CountWords(filePaths: string[]): void {
+    CountItems(filePaths, GetWordCount, "words");
 }
 
 main();
