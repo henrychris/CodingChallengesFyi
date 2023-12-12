@@ -30,11 +30,41 @@ function main(): void {
     }
 }
 
-// each switch function calls an internal function that returns a number -> the actual count function.
-// the switch function iterates over each file
-// if file exists, it counts and prints.
-// if file does not exist,
-function CountBytes(filePaths: string[]): void {}
+function CountBytes(filePaths: string[]): void {
+    // for each character get the byte size and add to the count
+    let totalByteCount = 0;
+
+    for (let index = 0; index < filePaths.length; index++) {
+        let byteCount = 0;
+
+        if (!fs.existsSync(filePaths[index])) {
+            console.error(`wc: ${filePaths[index]}: No such file or directory`);
+            continue;
+        }
+
+        let fileContent = fs.readFileSync(filePaths[index], "utf-8");
+        byteCount = GetByteCount(fileContent);
+        totalByteCount += byteCount;
+
+        console.log(`${byteCount} ${filePaths[index]}`);
+    }
+
+    if (filePaths.length > 1) {
+        console.log(`${totalByteCount} total`);
+    }
+}
+
+const byteSize = (str: string) => new Blob([str]).size;
+
+function GetByteCount(fileContent: string): number {
+    let count = 0;
+
+    for (let j = 0; j < fileContent.length; j++) {
+        count += byteSize(fileContent[j]);
+    }
+    return count;
+}
+
 
 function CountLines(filePaths: string[]): void {
     let totalLineCount = 0;
@@ -152,10 +182,6 @@ function GetWordCount(fileContent: string): number {
 }
 
 function GetDefaultCount(filePaths: string[]): void {}
-
-function GetFileContent(filePath: string): string {
-    return "";
-}
 
 main();
 
