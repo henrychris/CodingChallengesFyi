@@ -25,7 +25,7 @@ function main(): void {
             CountWords(args.slice(1));
             break;
         default:
-            GetDefaultCount(args.slice(1));
+            GetDefaultCount(args);
             break;
     }
 }
@@ -64,7 +64,6 @@ function GetByteCount(fileContent: string): number {
     }
     return count;
 }
-
 
 function CountLines(filePaths: string[]): void {
     let totalLineCount = 0;
@@ -181,27 +180,36 @@ function GetWordCount(fileContent: string): number {
     return count;
 }
 
-function GetDefaultCount(filePaths: string[]): void {}
+function GetDefaultCount(filePaths: string[]): void {
+    let totalByteCount = 0;
+    let totalWordCount = 0;
+    let totalLineCount = 0;
+
+    for (let index = 0; index < filePaths.length; index++) {
+        if (!fs.existsSync(filePaths[index])) {
+            console.error(`wc: ${filePaths[index]}: No such file or directory`);
+            continue;
+        }
+
+        let fileContent = fs.readFileSync(filePaths[index], "utf-8");
+        let byteCount = GetByteCount(fileContent);
+        let lineCount = GetLineCount(fileContent);
+        let wordCount = GetWordCount(fileContent);
+
+        totalByteCount += byteCount;
+        totalLineCount += lineCount;
+        totalWordCount += wordCount;
+
+        console.log(
+            `${lineCount} ${wordCount} ${byteCount} ${filePaths[index]}`
+        );
+    }
+
+    if (filePaths.length > 1) {
+        console.log(
+            `${totalLineCount} ${totalWordCount} ${totalByteCount} total`
+        );
+    }
+}
 
 main();
-
-// ? accept command line arguments.
-// ? check the command flag using a switch statement
-// -c: number of bytes
-// -l: number of lines
-// -m: number of characters
-// -w: word counts
-
-// ? when multiple files are passed, e.g.: ccwc test.txt other.txt
-// return count for each file
-// return total count
-// 2222 test.txt
-// 1111 other.txt
-// 3333 total
-
-// ! if file isn't found, print the command and: No such file or directory, e.g.
-// wc -c: o such file or directory
-
-// first need to read the file
-// then loop through counting the values
-// then print the results
