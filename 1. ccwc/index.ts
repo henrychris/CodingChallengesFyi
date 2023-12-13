@@ -3,14 +3,11 @@ import { ReadStream } from "tty";
 
 function main(): void {
     const args = process.argv.slice(2);
-    console.log(args);
 
-    // todo: handle the final case to read std input
-    // todo: optimise by reading from stream
-    // todo: write article. Show process from initial dirty implemenation to 'clean' version
+    // todo: write tests
     switch (args[0]) {
         case "-c":
-            // use slice to remove the first parameter. that way we only have file paths.
+            // use slice to remove the first parameter. that way we only have file paths left in args
             CountBytes(args.slice(1));
             break;
         case "-l":
@@ -47,38 +44,19 @@ function CountBytes(filePaths: string[]): void {
     }
 
     let totalByteCount = 0;
-    let completedStreams = 0;
-    const fileStreamMap = new Map<string, number>(); // Map to track file processing order
-
     for (const filePath of filePaths) {
         if (!fs.existsSync(filePath)) {
             console.error(`wc: ${filePath}: No such file or directory`);
             continue;
         }
 
-        const readStream = fs.createReadStream(filePath);
-        let byteCount = 0;
+        let byteCount = fs.statSync(filePath).size;
+        console.log(`${byteCount} ${filePath}`);
+        totalByteCount += byteCount;
+    }
 
-        readStream.on("data", (chunk) => {
-            byteCount += chunk.length; // Accumulate bytes
-        });
-
-        readStream.on("end", () => {
-            totalByteCount += byteCount;
-            fileStreamMap.set(filePath, byteCount); // Store byte count for each file
-
-            completedStreams++;
-
-            if (completedStreams === filePaths.length) {
-                for (const [file, bytes] of filePaths.map((path) => [
-                    path,
-                    fileStreamMap.get(path),
-                ])) {
-                    console.log(`${bytes} ${file}`);
-                }
-                console.log(`${totalByteCount} total`);
-            }
-        });
+    if (filePaths.length > 1) {
+        console.log(`${totalByteCount} total`);
     }
 }
 
@@ -162,13 +140,7 @@ function GetWordCount(fileContent: string): number {
 //#region CHARACTERS
 
 function GetCharacterCount(fileContent: string): number {
-    let count = 0;
-
-    for (let j = 0; j < fileContent.length; j++) {
-        count++;
-    }
-
-    return count;
+    return fileContent.length;
 }
 
 function CountCharacters(filePaths: string[]): void {
