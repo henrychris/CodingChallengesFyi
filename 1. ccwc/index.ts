@@ -1,5 +1,4 @@
 import * as fs from "fs";
-import { exit } from "process";
 import { ReadStream } from "tty";
 
 function main(): void {
