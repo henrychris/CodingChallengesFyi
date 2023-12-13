@@ -1,15 +1,14 @@
-import { exit } from "process";
 import * as fs from "fs";
+import { exit } from "process";
+import { ReadStream } from "tty";
 
 function main(): void {
     const args = process.argv.slice(2);
     console.log(args);
 
-    if (args.length < 1) {
-        console.error("No arguments provided.");
-        exit(-1);
-    }
-
+    // todo: handle the final case to read std input
+    // todo: optimise by reading from stream
+    // todo: write article. Show process from initial dirty implemenation to 'clean' version
     switch (args[0]) {
         case "-c":
             // use slice to remove the first parameter. that way we only have file paths.
@@ -30,6 +29,7 @@ function main(): void {
     }
 }
 
+//#region BYTES
 const byteSize = (str: string) => new Blob([str]).size;
 
 function GetByteCount(fileContent: string): number {
@@ -40,6 +40,67 @@ function GetByteCount(fileContent: string): number {
     }
     return count;
 }
+
+function CountBytes(filePaths: string[]): void {
+    if (filePaths.length < 1) {
+        CountBytesFromStdIn();
+        return;
+    }
+
+    let totalByteCount = 0;
+    let completedStreams = 0;
+    const fileStreamMap = new Map<string, number>(); // Map to track file processing order
+
+    for (const filePath of filePaths) {
+        if (!fs.existsSync(filePath)) {
+            console.error(`wc: ${filePath}: No such file or directory`);
+            continue;
+        }
+
+        const readStream = fs.createReadStream(filePath);
+        let byteCount = 0;
+
+        readStream.on("data", (chunk) => {
+            byteCount += chunk.length; // Accumulate bytes
+        });
+
+        readStream.on("end", () => {
+            totalByteCount += byteCount;
+            fileStreamMap.set(filePath, byteCount); // Store byte count for each file
+
+            completedStreams++;
+
+            if (completedStreams === filePaths.length) {
+                for (const [file, bytes] of filePaths.map((path) => [
+                    path,
+                    fileStreamMap.get(path),
+                ])) {
+                    console.log(`${bytes} ${file}`);
+                }
+                console.log(`${totalByteCount} total`);
+            }
+        });
+    }
+}
+
+function CountBytesFromStdIn(): void {
+    const readStream = process.stdin;
+    let totalByteCount = 0;
+    let byteCount = 0;
+
+    readStream.on("data", (chunk) => {
+        byteCount += chunk.length; // Accumulate bytes
+    });
+
+    readStream.on("end", () => {
+        totalByteCount += byteCount;
+        console.log(`${byteCount}`);
+    });
+}
+
+//#endregion
+
+//#region LINES
 
 function GetLineCount(fileContent: string): number {
     let count = 0;
@@ -59,14 +120,24 @@ function GetLineCount(fileContent: string): number {
     return count;
 }
 
-function GetCharacterCount(fileContent: string): number {
-    let count = 0;
-
-    for (let j = 0; j < fileContent.length; j++) {
-        count++;
+function CountLines(filePaths: string[]): void {
+    if (filePaths.length < 1) {
+        CountFromStdIn(GetLineCount);
+        return;
     }
+    CountItems(filePaths, GetLineCount);
+}
 
-    return count;
+//#endregion
+
+//#region WORDS
+
+function CountWords(filePaths: string[]): void {
+    if (filePaths.length < 1) {
+        CountFromStdIn(GetWordCount);
+        return;
+    }
+    CountItems(filePaths, GetWordCount);
 }
 
 function GetWordCount(fileContent: string): number {
@@ -87,7 +158,35 @@ function GetWordCount(fileContent: string): number {
     return count;
 }
 
+//#endregion
+
+//#region CHARACTERS
+
+function GetCharacterCount(fileContent: string): number {
+    let count = 0;
+
+    for (let j = 0; j < fileContent.length; j++) {
+        count++;
+    }
+
+    return count;
+}
+
+function CountCharacters(filePaths: string[]): void {
+    if (filePaths.length < 1) {
+        CountFromStdIn(GetCharacterCount);
+        return;
+    }
+    CountItems(filePaths, GetCharacterCount);
+}
+//#endregion
+
 function GetDefaultCount(filePaths: string[]): void {
+    if (filePaths.length < 1) {
+        CountDefaultFromStdIn();
+        return;
+    }
+
     let totalByteCount = 0;
     let totalWordCount = 0;
     let totalLineCount = 0;
@@ -119,10 +218,33 @@ function GetDefaultCount(filePaths: string[]): void {
     }
 }
 
+async function CountDefaultFromStdIn(): Promise<void> {
+    let fileContent = await read(process.stdin);
+
+    let totalWordCount = 0;
+    let totalLineCount = 0;
+    let totalByteCount = 0;
+
+    let byteCount = GetByteCount(fileContent);
+    let lineCount = GetLineCount(fileContent);
+    let wordCount = GetWordCount(fileContent);
+
+    totalByteCount += byteCount;
+    totalLineCount += lineCount;
+    totalWordCount += wordCount;
+
+    console.log(`${lineCount} ${wordCount} ${byteCount}`);
+}
+
+async function read(stream: ReadStream) {
+    const chunks = [];
+    for await (const chunk of stream) chunks.push(chunk);
+    return Buffer.concat(chunks).toString("utf8");
+}
+
 function CountItems(
     filePaths: string[],
-    getCount: (content: string) => number,
-    label: string
+    getCount: (content: string) => number
 ): void {
     let totalItemCount = 0;
 
@@ -142,24 +264,15 @@ function CountItems(
     }
 
     if (filePaths.length > 1) {
-        console.log(`${totalItemCount} total ${label}`);
+        console.log(`${totalItemCount}`);
     }
 }
 
-function CountBytes(filePaths: string[]): void {
-    CountItems(filePaths, GetByteCount, "bytes");
-}
-
-function CountLines(filePaths: string[]): void {
-    CountItems(filePaths, GetLineCount, "lines");
-}
-
-function CountCharacters(filePaths: string[]): void {
-    CountItems(filePaths, GetCharacterCount, "characters");
-}
-
-function CountWords(filePaths: string[]): void {
-    CountItems(filePaths, GetWordCount, "words");
+async function CountFromStdIn(
+    getCount: (content: string) => number
+): Promise<void> {
+    let fileContent = await read(process.stdin);
+    console.log(`${getCount(fileContent)}`);
 }
 
 main();
