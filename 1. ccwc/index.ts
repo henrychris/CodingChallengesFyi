@@ -2,6 +2,7 @@ import * as fs from "fs";
 import { ReadStream } from "tty";
 
 function main(): void {
+    console.log(process.argv)
     const args = process.argv.slice(2);
 
     // todo: write tests
@@ -62,7 +63,6 @@ function CountBytes(filePaths: string[]): void {
 
 function CountBytesFromStdIn(): void {
     const readStream = process.stdin;
-    let totalByteCount = 0;
     let byteCount = 0;
 
     readStream.on("data", (chunk) => {
@@ -70,7 +70,6 @@ function CountBytesFromStdIn(): void {
     });
 
     readStream.on("end", () => {
-        totalByteCount += byteCount;
         console.log(`${byteCount}`);
     });
 }
