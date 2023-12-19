@@ -1,0 +1,33 @@
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Url Shortener</title>
+        <link rel="stylesheet" href="styles.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@1,300&display=swap"
+            rel="stylesheet"
+        />
+    </head>
+    <body>
+        <h1>URL Shortener</h1>
+        <div class="link-container">
+            <input
+                type="text"
+                id="originalUrl"
+                class="displayBox"
+                placeholder="Enter URL"
+            />
+            <br />
+            <!-- Use padding instead -->
+            <br />
+            <button onclick="shortenUrl()" id="shortenButton">Shorten</button>
+            <input type="hidden" id="shortenedUrl" class="displayBox" />
+            <!-- Can display new link here by manipulating DOM -->
+        </div>
+
+        <script src="script.js"></script>
+    </body>
+</html>
