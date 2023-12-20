@@ -13,17 +13,21 @@ app.get("/", (_req, res): void => {
     res.send("Hello World!");
 });
 
-app.post(
-    "/shorten",
-    async (req: CustomRequest<ShortenerRequest>, res) => {
-        var createdResponse = await shorten(req.body.longUrl);
-
-        if (createdResponse) {
-            res.status(200).send(createdResponse);
-        }
-        res.status(400).send({ error: true, message: "Something went wrong." });
+app.post("/shorten", async (req: CustomRequest<ShortenerRequest>, res) => {
+    if (!req.body.longUrl) {
+        res.status(400).send({
+            error: true,
+            message: "The URL is required.",
+        });
+        return;
     }
-);
+
+    var createdResponse = await shorten(req.body.longUrl);
+    if (createdResponse) {
+        res.status(200).send(createdResponse);
+    }
+    res.status(400).send({ error: true, message: "Something went wrong." });
+});
 
 app.listen(PORT, () => {
     console.log(`Listening on http://localhost:${PORT}...`);
