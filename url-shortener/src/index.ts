@@ -11,6 +11,10 @@ const PORT = 3000;
 
 connectDB();
 
+app.get("/", (_req, res) => {
+    res.send("Hello World.");
+});
+
 app.get("/:shortCode", async (req, res): Promise<void> => {
     const shortCode = req.params.shortCode as string;
 
