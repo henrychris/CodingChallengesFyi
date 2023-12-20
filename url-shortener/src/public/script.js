@@ -1,0 +1,1 @@
+// on load, make sure the shortened link paragraph is hidden

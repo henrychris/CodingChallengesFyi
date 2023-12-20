@@ -6,9 +6,10 @@ import { GetLongUrl } from "./util/navigate";
 import { safe } from "./util/safe";
 import { DeleteUrl } from "./util/delete";
 
+const PORT = 3000;
 const app = express();
 app.use(express.json()); // this is important, as this middleware parses json from the request
-const PORT = 3000;
+app.use(express.static("public"));
 
 connectDB();
 
