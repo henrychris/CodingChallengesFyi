@@ -16,7 +16,7 @@ app.get("/", (_req, res): void => {
 app.post("/shorten", async (req: CustomRequest<ShortenerRequest>, res) => {
     if (!req.body.longUrl) {
         res.status(400).send({
-            error: true,
+            success: false,
             message: "The URL is required.",
         });
         return;
@@ -24,9 +24,9 @@ app.post("/shorten", async (req: CustomRequest<ShortenerRequest>, res) => {
 
     var createdResponse = await shorten(req.body.longUrl);
     if (createdResponse) {
-        res.status(200).send(createdResponse);
+        res.status(200).send({ success: true, data: createdResponse });
     }
-    res.status(400).send({ error: true, message: "Something went wrong." });
+    res.status(400).send({ success: false, message: "Something went wrong." });
 });
 
 app.listen(PORT, () => {
