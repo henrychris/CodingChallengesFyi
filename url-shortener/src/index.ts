@@ -27,7 +27,7 @@ app.get("/:shortCode", async (req, res): Promise<void> => {
 
     const result = await safe(GetLongUrl(shortCode));
     if (!result.success) {
-        res.status(400).send({
+        res.status(404).send({
             success: false,
             message: `A URL with the shortCode ${shortCode} was not found.`,
         });
