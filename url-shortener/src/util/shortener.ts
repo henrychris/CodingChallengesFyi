@@ -4,7 +4,7 @@ import { safe } from "./safe";
 import { Md5 } from "ts-md5";
 import * as b62 from "./base62";
 
-const BASE_URL = "https://mysite.com/";
+const BASE_URL = "http://localhost:3000/";
 
 export async function shorten(
     longUrl: string
