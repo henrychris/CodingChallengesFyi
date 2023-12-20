@@ -4,6 +4,7 @@ import { CustomRequest, ShortenerRequest } from "./models/shortenerRequest";
 import { shorten } from "./util/shortener";
 import { GetLongUrl } from "./util/navigate";
 import { safe } from "./util/safe";
+import { DeleteUrl } from "./util/delete";
 
 const app = express();
 app.use(express.json()); // this is important, as this middleware parses json from the request
@@ -51,6 +52,20 @@ app.post("/shorten", async (req: CustomRequest<ShortenerRequest>, res) => {
         res.status(200).send({ success: true, data: createdResponse });
     }
     res.status(400).send({ success: false, message: "Something went wrong." });
+});
+
+app.delete("/:shortCode", async (req, res) => {
+    const shortCode = req.params.shortCode as string;
+
+    if (!shortCode) {
+        res.status(400).send({
+            success: false,
+            message: "The URL is required.",
+        });
+    }
+
+    await DeleteUrl(shortCode);
+    res.status(204).send();
 });
 
 app.listen(PORT, () => {
