@@ -12,22 +12,23 @@
         />
     </head>
     <body>
-        <h1>URL Shortener</h1>
-        <div class="link-container">
-            <input
-                type="text"
-                id="originalUrl"
-                class="displayBox"
-                placeholder="Enter URL"
-            />
-            <br />
-            <!-- Use padding instead -->
-            <br />
-            <button onclick="shortenUrl()" id="shortenButton">Shorten</button>
-            <input type="hidden" id="shortenedUrl" class="displayBox" />
-            <!-- Can display new link here by manipulating DOM -->
-        </div>
+        <main>
+            <div class="main-container">
+                <h2>URL Shortener</h2>
+                <article>
+                    <input
+                        type="url"
+                        class="text-input-box"
+                        placeholder="Enter URL"
+                    /><button type="submit" onclick="shortenUrl()">
+                        Shorten
+                    </button>
+                </article>
 
+                <input class="text-display-box" type="hidden" />
+            </div>
+        </main>
         <script src="script.js"></script>
+        <!-- Placed here to postpone loading until it the HTML is done rendering -->
     </body>
 </html>

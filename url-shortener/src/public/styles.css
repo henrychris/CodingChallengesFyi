@@ -1,33 +1,39 @@
+* {
+    outline: 1px solid red;
+    overflow: hidden;
+    /* use this to check element layout */
+}
+
 body {
     font-family: "Montserrat", sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
 }
 
-.link-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    height: 50%;
-    width: 50%;
-    border-color: black;
-    border-style: solid;
-    border-width: 1px;
+.main-container {
+    width: 80%;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 50px;
 }
 
-.displayBox {
-    border-color: grey;
-    border-style: solid;
-    border-width: 1px;
-    width: 28%;
-    height: 10%;
+.text-input-box {
+    width: 75%;
+    text-align: center;
 }
 
-#shortenButton {
-    width: 10%;
-    height: 10%;
+.text-display-box {
+    width: 75%;
+}
+
+button {
+    width: 25%;
+}
+
+h2 {
+    text-align: center;
+}
+
+button:active {
+    background-color: gray;
+    color: white;
 }
