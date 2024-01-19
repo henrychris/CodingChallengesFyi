@@ -1,37 +1,22 @@
-import fs from "node:fs";
-import readline from "node:readline";
+import lineByLine from "n-readlines";
+
+let useNumbering = false;
 
 function main(): void {
-    const args = process.argv.slice(2);
+    const args = process.argv.splice(2);
 
-    if (args[0] === "-" || args.length === 0) {
-        readFromStdIn();
-        return;
-    }
-
-    readFiles(args);
-}
-
-function readFiles(filePaths: string[]) {
-    for (let index = 0; index < filePaths.length; index++) {
-        const filePath = filePaths[index];
-        readFile(filePath);
-    }
-}
-
-function readFile(filePath: string) {
-    process.stdout.write(fs.readFileSync(filePath, "utf-8"));
-}
-
-function readFromStdIn() {
-    process.stdin.on("data", (data) => {
-        process.stdout.write(data.toString());
+    args.forEach((element) => {
+        readFile(element);
     });
 }
 
-main();
+function readFile(filePath: string) {
+    let line;
+    const liner = new lineByLine(filePath);
+    while ((line = liner.next())) {
+        process.stdout.write(line);
+        process.stdout.write("\n");
+    }
+}
 
-// ! FLOW
-// slice cmdline args to get working arguments
-// if no args exist or a '-' is passed, read from stdIn
-// else, read and concatenate all args.
+main();

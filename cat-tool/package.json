@@ -3,9 +3,13 @@
   "module": "ccat.ts",
   "type": "module",
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@types/n-readlines": "^1.0.6"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "n-readlines": "^1.0.1"
   }
 }
