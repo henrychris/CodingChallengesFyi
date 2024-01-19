@@ -6,7 +6,11 @@ function main(): void {
     const args = process.argv.splice(2);
 
     args.forEach((element) => {
-        readFile(element);
+        if (element === "-") {
+            readFromStdIn();
+        } else {
+            readFile(element);
+        }
     });
 }
 
@@ -17,6 +21,12 @@ function readFile(filePath: string) {
         process.stdout.write(line);
         process.stdout.write("\n");
     }
+}
+
+function readFromStdIn() {
+    process.stdin.on("data", (data) => {
+        process.stdout.write(data.toString());
+    });
 }
 
 main();
