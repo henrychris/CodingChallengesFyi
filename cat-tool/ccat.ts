@@ -1,7 +1,7 @@
 import lineByLine from "./readline";
 
 function main(): void {
-    const args = process.argv.splice(2);
+    const args = process.argv.slice(2);
 
     if (args.length === 0) {
         readFromStdIn();
