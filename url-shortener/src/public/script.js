@@ -1,7 +1,7 @@
 const BASE_URL = "http://localhost:3000";
 
 function shortenUrl() {
-    const originalUrl = document.getElementById("originalUrl").value;
+    const originalUrl = document.getElementById("url-input").value;
     console.log(`Original Url: ${originalUrl}`);
 
     fetch(BASE_URL + "/shorten", {
@@ -15,7 +15,7 @@ function shortenUrl() {
         .then((result) => {
             console.log("Received Data:", result.data);
 
-            let element = document.getElementById("shortenedUrl");
+            let element = document.getElementById("shortened-url");
             element.type = "text";
             element.value = result.data.shortUrl;
             blockUserInputOnElement(element);
@@ -26,7 +26,7 @@ function shortenUrl() {
 }
 
 // check for triple-click to auto-copy text
-let shortendUrlBox = document.getElementById("shortenedUrl");
+let shortendUrlBox = document.getElementById("shortened-url");
 shortendUrlBox.addEventListener("click", function (evt) {
     if (evt.detail === 3) {
         navigator.permissions
@@ -71,3 +71,5 @@ function blockUserInputOnElement(element) {
         false
     );
 }
+
+// TODO: test application lol
