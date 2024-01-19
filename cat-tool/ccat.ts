@@ -1,17 +1,15 @@
 import fs from "node:fs";
+import readline from "node:readline";
 
 function main(): void {
     const args = process.argv.slice(2);
 
-    switch (args[0]) {
-        case "-":
-            readFromStdIn();
-            break;
-
-        default:
-            readFiles(args);
-            break;
+    if (args[0] === "-" || args.length === 0) {
+        readFromStdIn();
+        return;
     }
+
+    readFiles(args);
 }
 
 function readFiles(filePaths: string[]) {
