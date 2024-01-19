@@ -35,6 +35,7 @@ function main(): void {
 function readFile(filePath: string) {
     let line: any;
     const liner = new lineByLine(filePath);
+
     while ((line = liner.next())) {
         process.stdout.write(line);
         process.stdout.write("\n");
@@ -44,14 +45,10 @@ function readFile(filePath: string) {
 function readFileWithNum(filePath: string, startLineNumber: number): number {
     let lineNum = startLineNumber;
     let line: any;
-
-    console.log("here");
-    
     const liner = new lineByLine(filePath);
+
     while ((line = liner.next())) {
-        process.stdout.write(lineNum.toString() + " ");
-        process.stdout.write(line);
-        process.stdout.write("\n");
+        process.stdout.write(`${lineNum} ${line}\n`);
         lineNum++;
     }
 
@@ -70,12 +67,9 @@ function readFromStdInWithNum(startLineNumber: number): number {
 
     const liner = new lineByLine(process.stdin.fd);
     while ((line = liner.next())) {
-        process.stdout.write(lineNum.toString() + " ");
-        process.stdout.write(line);
-        process.stdout.write("\n");
+        process.stdout.write(`${lineNum} ${line}\n`);
         lineNum++;
     }
-
     return lineNum;
 }
 
