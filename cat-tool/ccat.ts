@@ -12,12 +12,10 @@ function main(): void {
     if (args.includes("-n")) {
         args.forEach((element) => {
             if (element === "-n" && args.length === 1) {
-                let lineNum = 1;
                 lineNum = readFromStdInWithNum(lineNum);
             } else if (element === "-n") {
                 // skip haha
             } else if (element === "-") {
-                let lineNum = 1;
                 lineNum = readFromStdInWithNum(lineNum);
             } else {
                 lineNum = readFileWithNum(element, lineNum);
