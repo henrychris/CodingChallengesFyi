@@ -5,6 +5,11 @@ let useNumbering = false;
 function main(): void {
     const args = process.argv.splice(2);
 
+    if (args.length === 0) {
+        readFromStdIn();
+        return;
+    }
+
     args.forEach((element) => {
         if (element === "-") {
             readFromStdIn();
