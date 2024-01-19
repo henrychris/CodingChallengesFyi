@@ -15,14 +15,23 @@ function main(): void {
 function readFiles(filePaths: string[]) {
     for (let index = 0; index < filePaths.length; index++) {
         const filePath = filePaths[index];
-        process.stdout.write(fs.readFileSync(filePath, "utf-8"));
+        readFile(filePath);
     }
+}
+
+function readFile(filePath: string) {
+    process.stdout.write(fs.readFileSync(filePath, "utf-8"));
 }
 
 function readFromStdIn() {
     process.stdin.on("data", (data) => {
-        console.log(data.toString());
+        process.stdout.write(data.toString());
     });
 }
 
 main();
+
+// ! FLOW
+// slice cmdline args to get working arguments
+// if no args exist or a '-' is passed, read from stdIn
+// else, read and concatenate all args.
