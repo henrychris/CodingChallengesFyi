@@ -1,6 +1,4 @@
-import lineByLine from "n-readlines";
-
-let useNumbering = false;
+import lineByLine from "./readline";
 
 function main(): void {
     const args = process.argv.splice(2);
@@ -10,17 +8,34 @@ function main(): void {
         return;
     }
 
-    args.forEach((element) => {
-        if (element === "-") {
-            readFromStdIn();
-        } else {
-            readFile(element);
-        }
-    });
+    let lineNum = 1;
+    if (args.includes("-n")) {
+        args.forEach((element) => {
+            if (element === "-n" && args.length === 1) {
+                let lineNum = 1;
+                lineNum = readFromStdInWithNum(lineNum);
+            } else if (element === "-n") {
+                // skip haha
+            } else if (element === "-") {
+                let lineNum = 1;
+                lineNum = readFromStdInWithNum(lineNum);
+            } else {
+                lineNum = readFileWithNum(element, lineNum);
+            }
+        });
+    } else {
+        args.forEach((element) => {
+            if (element === "-") {
+                readFromStdIn();
+            } else {
+                readFile(element);
+            }
+        });
+    }
 }
 
 function readFile(filePath: string) {
-    let line;
+    let line: any;
     const liner = new lineByLine(filePath);
     while ((line = liner.next())) {
         process.stdout.write(line);
@@ -28,10 +43,42 @@ function readFile(filePath: string) {
     }
 }
 
+function readFileWithNum(filePath: string, startLineNumber: number): number {
+    let lineNum = startLineNumber;
+    let line: any;
+
+    console.log("here");
+    
+    const liner = new lineByLine(filePath);
+    while ((line = liner.next())) {
+        process.stdout.write(lineNum.toString() + " ");
+        process.stdout.write(line);
+        process.stdout.write("\n");
+        lineNum++;
+    }
+
+    return lineNum;
+}
+
 function readFromStdIn() {
     process.stdin.on("data", (data) => {
         process.stdout.write(data.toString());
     });
+}
+
+function readFromStdInWithNum(startLineNumber: number): number {
+    let lineNum = startLineNumber;
+    let line: any;
+
+    const liner = new lineByLine(process.stdin.fd);
+    while ((line = liner.next())) {
+        process.stdout.write(lineNum.toString() + " ");
+        process.stdout.write(line);
+        process.stdout.write("\n");
+        lineNum++;
+    }
+
+    return lineNum;
 }
 
 main();
