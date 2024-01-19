@@ -21,6 +21,18 @@ function main(): void {
                 lineNum = readFileWithNum(element, lineNum);
             }
         });
+    } else if (args.includes("-b")) {
+        args.forEach((element) => {
+            if (element === "-b" && args.length === 1) {
+                lineNum = readFromStdInWithNum(lineNum, true);
+            } else if (element === "-b") {
+                // skip haha
+            } else if (element === "-") {
+                lineNum = readFromStdInWithNum(lineNum, true);
+            } else {
+                lineNum = readFileWithNum(element, lineNum, true);
+            }
+        });
     } else {
         args.forEach((element) => {
             if (element === "-") {
@@ -42,14 +54,26 @@ function readFile(filePath: string) {
     }
 }
 
-function readFileWithNum(filePath: string, startLineNumber: number): number {
+function readFileWithNum(
+    filePath: string,
+    startLineNumber: number,
+    skipBlanks: boolean = false
+): number {
     let lineNum = startLineNumber;
     let line: any;
     const liner = new lineByLine(filePath);
 
     while ((line = liner.next())) {
-        process.stdout.write(`${lineNum} ${line}\n`);
-        lineNum++;
+        if (skipBlanks) {
+            if (line.length > 1) {
+                process.stdout.write(lineNum + " ");
+                lineNum++;
+            }
+            process.stdout.write(`${line}\n`);
+        } else {
+            process.stdout.write(`${lineNum} ${line}\n`);
+            lineNum++;
+        }
     }
 
     return lineNum;
@@ -61,14 +85,25 @@ function readFromStdIn() {
     });
 }
 
-function readFromStdInWithNum(startLineNumber: number): number {
+function readFromStdInWithNum(
+    startLineNumber: number,
+    skipBlanks: boolean = false
+): number {
     let lineNum = startLineNumber;
     let line: any;
 
     const liner = new lineByLine(process.stdin.fd);
     while ((line = liner.next())) {
-        process.stdout.write(`${lineNum} ${line}\n`);
-        lineNum++;
+        if (skipBlanks) {
+            if (line.length > 1) {
+                process.stdout.write(lineNum + " ");
+                lineNum++;
+            }
+            process.stdout.write(`${line}\n`);
+        } else {
+            process.stdout.write(`${lineNum} ${line}\n`);
+            lineNum++;
+        }
     }
     return lineNum;
 }

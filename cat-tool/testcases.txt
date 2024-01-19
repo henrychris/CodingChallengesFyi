@@ -1,0 +1,13 @@
+bun ./ccat.ts test.txt
+
+head -n1 test.txt | bun ./ccat.ts -
+
+bun ./ccat.ts test.txt test2.txt
+
+bun ./ccat.ts test.txt test2.txt -n
+
+head -n5 test.txt | bun ./ccat.ts -n
+
+sed G test.txt | bun ./ccat.ts -n | head -n4
+
+sed G test.txt | bun ./ccat.ts -b | head -n5
