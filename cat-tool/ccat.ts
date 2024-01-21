@@ -1,6 +1,7 @@
 import lineByLine from "./readline";
 
 function main(): void {
+    // get cmdline arguments and remove node and path
     const args = process.argv.slice(2);
 
     if (args.length === 0) {
@@ -10,23 +11,30 @@ function main(): void {
 
     let lineNum = 1;
     if (args.includes("-n")) {
+        // print with line numbers
         args.forEach((element) => {
             if (element === "-n" && args.length === 1) {
+                // if we only have one element and it is the number flag, it
+                // means we are reading from stdin
                 lineNum = readFromStdInWithNum(lineNum);
             } else if (element === "-n") {
-                // skip haha
+                // when iterating over arguments, don't print or read '-n'
             } else if (element === "-") {
+                // stop to read stdin when this is encountered
                 lineNum = readFromStdInWithNum(lineNum);
             } else {
                 lineNum = readFileWithNum(element, lineNum);
             }
         });
     } else if (args.includes("-b")) {
+        // print with line numbers, but don't number blank lines
         args.forEach((element) => {
             if (element === "-b" && args.length === 1) {
+                // if we only have one element and it is the number flag, it
+                // means we are reading from stdin
                 lineNum = readFromStdInWithNum(lineNum, true);
             } else if (element === "-b") {
-                // skip haha
+                // when iterating over arguments, don't print or read '-b'
             } else if (element === "-") {
                 lineNum = readFromStdInWithNum(lineNum, true);
             } else {
@@ -34,6 +42,7 @@ function main(): void {
             }
         });
     } else {
+        // print without line numbers
         args.forEach((element) => {
             if (element === "-") {
                 readFromStdIn();
