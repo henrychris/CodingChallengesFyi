@@ -1,0 +1,19 @@
+{
+    "name": "roadmap-shell",
+    "module": "index.ts",
+    "type": "module",
+    "devDependencies": {
+        "@types/bun": "latest"
+    },
+    "peerDependencies": {
+        "typescript": "^5.0.0"
+    },
+    "dependencies": {
+        "@types/node": "^22.7.4",
+        "dotenv": "^16.4.5"
+    },
+    "scripts": {
+        "start": "bun index.ts",
+        "dev": "bun --watch index.ts"
+    }
+}
